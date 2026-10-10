@@ -1,0 +1,32 @@
+---
+description: Security and RBAC for the HRMS
+globs: backend/**/*.py,frontend/**/*.{ts,html}
+alwaysApply: false
+---
+
+# Security
+
+## Secrets
+
+- Load settings with `pydantic-settings`. Public Angular config may contain only the API path, never secrets.
+- Never log tokens, passwords, or full `Authorization` headers. Do not commit `.env`.
+
+## Backend
+
+- Every protected route authenticates in a dependency. Frontend checks are not authorization.
+- Hash passwords with Argon2 (`pwdlib`). Store refresh tokens as SHA-256 hashes and rotate them.
+- Access JWT is short-lived. Refresh cookie is `HttpOnly`, `SameSite=Lax`, path `/api/v1/auth`, and `Secure` in production.
+- CORS: explicit `allow_origins` and `allow_credentials=True`. Never `*` with credentials.
+- Validate input with Pydantic. Use the ORM; do not concatenate SQL.
+
+## Frontend
+
+- Keep the access token in memory. Do not store it in `localStorage`.
+- Do not use `bypassSecurityTrust*` unless a later change documents why.
+
+## Roles
+
+- `admin`: full shell access, including manager and employee screens.
+- `manager`: manager shell only.
+- `employee`: employee shell only.
+- Mirror changes in `docs/09-role-permission-matrix.md`.

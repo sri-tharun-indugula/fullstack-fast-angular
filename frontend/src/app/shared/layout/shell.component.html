@@ -1,0 +1,27 @@
+@if (user(); as current) {
+  <mat-toolbar>
+    <span>HRMS</span>
+    <nav>
+      @if (current.role === 'admin') {
+        <a mat-button routerLink="/admin">Admin</a>
+      }
+      @if (current.role === 'admin' || current.role === 'manager') {
+        <a mat-button routerLink="/manager">Manager</a>
+      }
+      @if (current.role === 'admin' || current.role === 'employee') {
+        <a mat-button routerLink="/employee">Employee</a>
+      }
+    </nav>
+    <span class="spacer"></span>
+    <a mat-button routerLink="/notifications">
+      Notifications@if (unreadCount() > 0) {
+        <span class="badge"> ({{ unreadCount() }})</span>
+      }
+    </a>
+    <span class="who">{{ current.full_name }} · {{ current.role }}</span>
+    <button mat-button type="button" (click)="logout()">Log out</button>
+  </mat-toolbar>
+}
+<main>
+  <router-outlet />
+</main>

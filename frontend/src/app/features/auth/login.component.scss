@@ -1,0 +1,30 @@
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+mat-card {
+  width: min(100%, 24rem);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}
+
+button {
+  margin-top: 0.5rem;
+}

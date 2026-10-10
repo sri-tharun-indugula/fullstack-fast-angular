@@ -1,0 +1,42 @@
+---
+description: FastAPI backend patterns (routers, schemas, DB)
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# FastAPI
+
+## Structure
+
+- Entry: `app/main.py` — create app, CORS with explicit origins and `allow_credentials=True`, mount `api/v1`.
+- Split **routers** (`api/v1/endpoints`), **schemas** (Pydantic v2), **models** (SQLAlchemy 2), **services**, **deps** (`api/deps.py`).
+- Keep route handlers thin: validate → call service → return schema.
+
+## Handlers
+
+```python
+@router.get("/me", response_model=UserPublic)
+async def me(current_user: CurrentUser) -> UserPublic:
+    return UserPublic.model_validate(current_user)
+```
+
+- Use `async def` for database and HTTP. Use plain `def` for hashing and token claim building.
+- Raise `HTTPException` for client errors. Do not leak password-hash or token details.
+
+## Pydantic v2
+
+- `model_config = ConfigDict(from_attributes=True)` on ORM-backed read schemas.
+- Use `Field`, `field_validator`, `model_validate`, and `model_dump`.
+- Never use `class Config`, `orm_mode`, or `validator` from Pydantic v1.
+- Separate input schemas from public responses. Never return `hashed_password`.
+
+## Database
+
+- Async session from `get_session`. The dependency commits on success and rolls back on exception.
+- Schema changes only through Alembic.
+
+## Auth dependencies
+
+- `get_current_user` validates the access JWT and loads an active user.
+- `require_roles(Role.admin, ...)` returns 403 when the role does not match.
+- Do not trust the Angular route guard.

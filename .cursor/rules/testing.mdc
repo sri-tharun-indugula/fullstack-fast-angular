@@ -1,0 +1,26 @@
+---
+description: Backend pytest and frontend unit conventions
+globs: backend/tests/**/*.py,backend/**/test_*.py,frontend/**/*.spec.ts
+alwaysApply: false
+---
+
+# Testing
+
+## Backend (pytest)
+
+- Tests live in `backend/tests/` (for example `tests/api/test_auth.py`).
+- Use `httpx.AsyncClient` with `ASGITransport` against the FastAPI app and a real database session.
+- Cover happy path, 401, 403, validation 422, and refresh rotation (old cookie rejected).
+- Seed users inside fixtures. Do not depend on developer seed passwords.
+- Keep tests deterministic and independent of order.
+
+## Frontend
+
+- Specs sit next to source (`*.spec.ts`).
+- Mock `HttpClient` with `HttpTestingController`.
+- Assert user-visible outcomes, not private fields.
+- Critical browser check for this foundation: login as admin, manager, and employee, then confirm the access token is absent from `localStorage` and the refresh cookie is httpOnly.
+
+## Same change
+
+New API behavior needs tests in the same change.

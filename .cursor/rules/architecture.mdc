@@ -1,0 +1,15 @@
+---
+description: Monorepo layout and cross-stack conventions
+alwaysApply: true
+---
+
+# Architecture
+
+- **Layout**: `backend/` (FastAPI) and `frontend/` (Angular). Docs in `docs/`. No shared runtime code; align types via Pydantic schemas and TypeScript interfaces. See `docs/01-architecture.md`.
+- **API**: Version under `/api/v1`. Backend owns auth, validation, and business rules. Frontend guards are UX only.
+- **Roles**: `admin`, `manager`, `employee`. Enforce with `require_roles` on the server. Matrix: `docs/09-role-permission-matrix.md`.
+- **Config**: Secrets and URLs from environment only (`.env.example`). Never commit real tokens or `.env`.
+- **Dev**: Backend `:8000`, Angular `:4200`. `frontend/proxy.conf.json` forwards `/api` so the refresh cookie is same-origin.
+- **Data**: PostgreSQL, async SQLAlchemy, Alembic. Local database via `docker-compose.yml`.
+- **Docs**: Update the relevant `docs/*.md` in the same change as a feature. Record open questions in `docs/06-follow-ups-and-roadmap.md`.
+- Prefer current Angular, FastAPI, and Pydantic docs over remembered syntax when an API is uncertain.

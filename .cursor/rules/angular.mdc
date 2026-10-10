@@ -1,0 +1,32 @@
+---
+description: Angular frontend patterns (standalone, HTTP, features)
+globs: frontend/**/*.{ts,html,scss,css}
+alwaysApply: false
+---
+
+# Angular
+
+## Structure
+
+- Standalone components only. No NgModules.
+- `src/app/core/` for auth, interceptors, and guards. `src/app/features/<name>/` for screens. `src/app/shared/` for the shell and presentational UI.
+- API base is `/api/v1` via `environment.ts` and `proxy.conf.json`.
+
+## Components
+
+- `inject()`, `signal()`, `computed()`, and `input()`.
+- Templates use `@if`, `@for`, and `@switch`.
+- Angular Material for controls and layout.
+- Reactive forms with explicit types. No `any`.
+
+## Auth
+
+- Access token lives in an `AuthService` signal only. Never `localStorage` or `sessionStorage`.
+- Refresh token is an httpOnly cookie. Send `withCredentials: true`.
+- Functional `authGuard` and `roleGuard`. Guards are UX; the API still enforces roles.
+- `authInterceptor` attaches `Authorization: Bearer` and retries once after a 401 refresh. It does not refresh while calling login or refresh.
+
+## Routing
+
+- Lazy-load with `loadComponent`.
+- Role homes: `/admin`, `/manager`, `/employee` as in `docs/09-role-permission-matrix.md`.
